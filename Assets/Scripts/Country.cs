@@ -55,7 +55,8 @@ public class Country
     }
     public void adjustScore(double eMulti)
 	{
-        Score = (int)(GDP - ((Emissions - 500) * (eMulti)))/10;
+        //Score = (int)(GDP - ((Emissions - 500) * (eMulti)))/10;
+        Score = (int)((GDP*1.01-20000)*10 / (Emissions));
 	}
     public void adjustEnvironment(double envi2, double envi3)
 	{

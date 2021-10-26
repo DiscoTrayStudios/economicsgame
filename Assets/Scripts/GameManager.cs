@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Audio;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,9 +14,6 @@ public class GameManager : MonoBehaviour
     public GameObject canvas;
     //private GameObject resetCanvas;
     public GameObject events;
-    public AudioSource buttonClick;
-    public AudioSource acceptTreay;
-    public AudioSource denyTreaty;
     public AudioSource BackgroundAmbience;
     public TextMeshProUGUI title;
     public GameObject startButton;
@@ -80,6 +78,11 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI finalScore;
     public GameObject roundCount;
 
+    // Volume
+    public AudioMixer mixer;
+    public GameObject volumeButton;
+    public GameObject volumeSlider;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -116,6 +119,7 @@ public class GameManager : MonoBehaviour
     public void start()
     {
         //StartCoroutine(HideTextAfterSeconds(1, title));
+        volumeButton.SetActive(false);
         nameEntry.GetComponent<TMP_InputField>().text = "";
         playerList = new List<Country>();
         StartCoroutine(RemoveAfterSeconds(1, startButton));
@@ -131,6 +135,7 @@ public class GameManager : MonoBehaviour
     // Tutorial
     public void TutorialStart()
     {
+        volumeButton.SetActive(false);
         tutorialTextBox.SetActive(true);
         tutorialText.text = "In this game, you represent your country at international climate accords. \n \n" +
             "There are two main numbers you need to consider in this game: GDP and Emissions.";
@@ -183,6 +188,7 @@ public class GameManager : MonoBehaviour
     // Credits
     public void credits()
     {
+        volumeButton.SetActive(false);
         clearMenuUI();
         backButton.SetActive(true);
         creditsText.SetActive(true);
@@ -219,6 +225,7 @@ public class GameManager : MonoBehaviour
 
         //reset main menu
         startButton.SetActive(true);
+        volumeButton.SetActive(true);
         title.text = "Climate Goes Political";
     }
 
@@ -246,7 +253,6 @@ public class GameManager : MonoBehaviour
             if (playerList.Count == 4 || botMode)
             {
                 treatyCost = Random.Range(1000, 1500);
-                ClickButton();
                 clearMenuUI();
                 initializeNames();
                 updateLeaderboard();
@@ -708,13 +714,13 @@ public class GameManager : MonoBehaviour
                     p.LastGDP = p.GDP;
                     p.GDP -= treatyCost;
                     p.LastEmissions = p.Emissions;
-                    p.Emissions -= p.Emissions * (1.0f / 5.0f);
+                    p.Emissions -= p.Emissions * (1.0f / 20.0f);
                 }
                 else
                 {
                     p.LastGDP = p.GDP;
                     p.LastEmissions = p.Emissions;
-                    p.Emissions *= (5.0f / 4.0f);
+                    p.Emissions *= (11.0f / 10.0f);
                 }
             }
             totalEmissions += p.Emissions;
@@ -800,12 +806,6 @@ public class GameManager : MonoBehaviour
         else currentPIndex = 3;
         currentCountry.GetComponentInChildren<TextMeshProUGUI>().text = playerList[currentPIndex].Name + "\nScore: " + playerList[currentPIndex].Score;
     }
-    // Sounds
-    public void ClickButton()
-    {
-        // audio = gameObject.GetComponent<AudioSource>();
-    }
-
     // End
     private void NextResult()
     {
@@ -935,5 +935,22 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
     }
-
+    // Volume Controls
+    // Activates the volume slider by clicking the icon
+    public void volumeOnClick()
+    {
+        if (volumeSlider.activeSelf == true)
+        {
+            volumeSlider.SetActive(false);
+        }
+        else
+        {
+            volumeSlider.SetActive(true);
+        }
+    }
+    // Sets the volume using the slider
+    public void setVolume(float sliderValue)
+    {
+        mixer.SetFloat("masterVol", (Mathf.Log10(sliderValue) * 20));
+    }
 }

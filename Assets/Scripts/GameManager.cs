@@ -78,6 +78,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI finalScore;
     public GameObject roundCount;
 
+    // Volume
     public AudioMixer mixer;
     public GameObject volumeButton;
     public GameObject volumeSlider;
@@ -713,13 +714,13 @@ public class GameManager : MonoBehaviour
                     p.LastGDP = p.GDP;
                     p.GDP -= treatyCost;
                     p.LastEmissions = p.Emissions;
-                    p.Emissions -= p.Emissions * (1.0f / 5.0f);
+                    p.Emissions -= p.Emissions * (1.0f / 20.0f);
                 }
                 else
                 {
                     p.LastGDP = p.GDP;
                     p.LastEmissions = p.Emissions;
-                    p.Emissions *= (5.0f / 4.0f);
+                    p.Emissions *= (11.0f / 10.0f);
                 }
             }
             totalEmissions += p.Emissions;

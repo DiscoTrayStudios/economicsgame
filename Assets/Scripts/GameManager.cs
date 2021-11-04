@@ -77,6 +77,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI finalCO2;
     public TextMeshProUGUI finalScore;
     public GameObject roundCount;
+    // Backgrounds
+    public GameObject des1;
+    public GameObject des2;
 
     // Volume
     public AudioMixer mixer;
@@ -162,7 +165,7 @@ public class GameManager : MonoBehaviour
         }
         else if (tutorialCount == 2)
         {
-            tutorialText.text = "C02 tracks how much your country's emissions in megatons of carbon. \n \n" +
+            tutorialText.text = "CO<sub><size=150%>2</size></sub> tracks how much your country's emissions in megatons of carbon. \n \n" +
                 "Each turn, you will be presented with the opportunity to join a climate treaty.\n" +
                 "These treaties have some up-front costs, but a healthy environment will help your growth in the long run.\n\n" +
                 "In dire situations, you may get ahead by skimping out on your treaties. But beware the damage that this can do.";
@@ -411,11 +414,12 @@ public class GameManager : MonoBehaviour
     private string GetPromptText()
     {
         string toReturn = "";
-        double emissionDecPerc = emissionsChangePct * -100;
-        toReturn += $"Treaty: Spend ${treatyCost} to reduce " +
-            $"your emissions by {emissionDecPerc}% this year?\n\n\n" +
-            $"Accept: GDP - {treatyCost} & C02 - {emissionDecPerc}%\n" +
-            "Decline: C02 + 25%";
+        toReturn += 
+            $"Treaty: Spend ${treatyCost} to reduce " +
+            $"your emissions by 5% this year?\n\n" +
+            $"Accept: GDP - {treatyCost}\n    " +
+            $"        CO<sub><size=150%>2</size></sub> - 5%\n" +
+            "Decline: CO<sub><size=150%>2</size></sub> + 10%";
         return toReturn;
     }
 
@@ -431,6 +435,7 @@ public class GameManager : MonoBehaviour
 
     public void agree()
     {
+        des1.GetComponent<Animator>().Play("agree");
         if (currentPhase == Phase.Punishment)
         {
             if (playerList[currentPIndex].GDP > declineList.Count * 1000)
@@ -446,10 +451,10 @@ public class GameManager : MonoBehaviour
                     havePunished = true;
                     startCitiesPhase();
                 }
-                else prompt.text = acceptList[currentPIndex].Name
-                + " would you like to impose tariffs on everyone who declined?\nCost = $"
+                else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+                + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
                 + (declineList.Count * 1000)
-                + " | Effect: Each decliner loses 0.05% growth rate";
+                + " \nEffect: Each decliner loses 0.05% growth rate";
             }
         }
         else {
@@ -471,6 +476,7 @@ public class GameManager : MonoBehaviour
 
     public void decline()
     {
+        des2.GetComponent<Animator>().Play("deny");
         if (currentPhase == Phase.Punishment)
         {
             currentPIndex += 1;
@@ -483,10 +489,10 @@ public class GameManager : MonoBehaviour
                 havePunished = true;
                 startCitiesPhase();
             }
-            else prompt.text = acceptList[currentPIndex].Name
-                + " would you like to punish everyone who declined?\nCost = $"
+            else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+                + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
                 + (declineList.Count * 1000)
-                + " | Effect: Each decliner loses 0.05% growth rate";
+                + " \nEffect: Each decliner loses 0.05% growth rate";
         }
         else {
             currentVote.DeclineVotes += 1;
@@ -526,7 +532,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ColorLerp(new Color(0, 0, 0, 0.5f), 0.75f));
         prompt.text = playerList[currentPIndex].Name + "'s Achievements:";
         finalGDP.text = "GDP: " + playerList[currentPIndex].GDP.ToString("C2");
-        finalCO2.text = "C02: " + playerList[currentPIndex].Emissions.ToString("F2") + "MT";
+        finalCO2.text = "CO<sub><size=150%>2</size></sub>: " + playerList[currentPIndex].Emissions.ToString("F2") + "MT";
         finalScore.text = "Score: " + playerList[currentPIndex].Score.ToString();
         description.text = PrintAccolades(0);
         leaderboard.GetComponent<Animator>().Play("hide_leader");
@@ -674,7 +680,7 @@ public class GameManager : MonoBehaviour
             string new_emm = playerList[i].Emissions.ToString("F2");
             string new_gro = playerList[i].Growth.ToString("P01");
             gdpList[i].text = "GDP: " + new_gdp;
-            emmList[i].text = "C02: " + new_emm + "MT";
+            emmList[i].text = "CO<sub><size=150%>2</size></sub>: " + new_emm + "MT";
             groList[i].text = "GROWTH: " + new_gro;
 
             //feedback board
@@ -759,7 +765,10 @@ public class GameManager : MonoBehaviour
         currentPhase = Phase.Punishment;
         currentPIndex = 0;
         setupVoteUI();
-        prompt.text = acceptList[0].Name + " would you like to punish everyone who declined?\nCost = $" + (declineList.Count*1000) + " | Effect: Each decliner loses 0.05% growth rate";
+        prompt.text = "<b>" + acceptList[0].Name + "</b>" 
+                + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
+                + (declineList.Count * 1000)
+                + " \nEffect: Each decliner loses 0.05% growth rate";
         //Debug.Log("Cost = $" + (declineList.Count*3000) + "GDP | Punishment: -"+ (0.05) +" Growth per country that declined");
         //declineList.ForEach(q =>
         //{
@@ -830,7 +839,7 @@ public class GameManager : MonoBehaviour
             currentPIndex++;
             prompt.text = playerList[currentPIndex].Name + "'s Achievements:";
             finalGDP.text = "GDP: " + playerList[currentPIndex].GDP.ToString("C2");
-            finalCO2.text = "C02: " + playerList[currentPIndex].Emissions.ToString("F2") + "MT";
+            finalCO2.text = "CO<sub><size=150%>2</size></sub>: " + playerList[currentPIndex].Emissions.ToString("F2") + "MT";
             finalScore.text = "Score: " + playerList[currentPIndex].Score.ToString();
             string newStr = PrintAccolades(currentPIndex);
             description.text = newStr;

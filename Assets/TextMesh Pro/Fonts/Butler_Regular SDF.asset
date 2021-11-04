@@ -39,6 +39,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _Ambient: 0.5
     - _Bevel: 0.5
@@ -51,7 +52,7 @@ Material:
     - _ColorMask: 15
     - _CullMode: 0
     - _Diffuse: 0.5
-    - _FaceDilate: 0
+    - _FaceDilate: 0.165
     - _FaceUVSpeedX: 0
     - _FaceUVSpeedY: 0
     - _GlowInner: 0.05
@@ -69,8 +70,8 @@ Material:
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
     - _ScaleRatioA: 0.9
-    - _ScaleRatioB: 0.73125
-    - _ScaleRatioC: 0.73125
+    - _ScaleRatioB: 0.58274996
+    - _ScaleRatioC: 0.58274996
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -465,6 +466,20 @@ MonoBehaviour:
       m_Y: 323
       m_Width: 43
       m_Height: 64
+    m_Scale: 1
+    m_AtlasIndex: 0
+  - m_Index: 25
+    m_Metrics:
+      m_Width: 42.3125
+      m_Height: 64.984375
+      m_HorizontalBearingX: 3.234375
+      m_HorizontalBearingY: 64.171875
+      m_HorizontalAdvance: 48.59375
+    m_GlyphRect:
+      m_X: 959
+      m_Y: 242
+      m_Width: 43
+      m_Height: 66
     m_Scale: 1
     m_AtlasIndex: 0
   - m_Index: 26
@@ -1279,20 +1294,6 @@ MonoBehaviour:
       m_Height: 11
     m_Scale: 1
     m_AtlasIndex: 0
-  - m_Index: 25
-    m_Metrics:
-      m_Width: 42.3125
-      m_Height: 64.984375
-      m_HorizontalBearingX: 3.234375
-      m_HorizontalBearingY: 64.171875
-      m_HorizontalAdvance: 48.59375
-    m_GlyphRect:
-      m_X: 959
-      m_Y: 242
-      m_Width: 43
-      m_Height: 66
-    m_Scale: 1
-    m_AtlasIndex: 0
   m_CharacterTable:
   - m_ElementType: 1
     m_Unicode: 32
@@ -1385,6 +1386,10 @@ MonoBehaviour:
   - m_ElementType: 1
     m_Unicode: 55
     m_GlyphIndex: 24
+    m_Scale: 1
+  - m_ElementType: 1
+    m_Unicode: 56
+    m_GlyphIndex: 25
     m_Scale: 1
   - m_ElementType: 1
     m_Unicode: 57
@@ -1617,10 +1622,6 @@ MonoBehaviour:
   - m_ElementType: 1
     m_Unicode: 8230
     m_GlyphIndex: 274
-    m_Scale: 1
-  - m_ElementType: 1
-    m_Unicode: 56
-    m_GlyphIndex: 25
     m_Scale: 1
   m_AtlasTextures:
   - {fileID: 8148185954808746939}

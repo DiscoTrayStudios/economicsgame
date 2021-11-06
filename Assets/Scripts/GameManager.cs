@@ -311,7 +311,7 @@ public class GameManager : MonoBehaviour
 		{
             feedbackBoard.GetComponent<Animator>().Play("feedback_show");
 		}
-        if (completedVotes < maxTurns - 1)
+        if (completedVotes < maxTurns)
         {
             roundCount.GetComponentInChildren<TextMeshProUGUI>().text = "ROUND " + (completedVotes + 1) + " OF " + maxTurns;
             roundCount.GetComponent<Animator>().Play("show_round");
@@ -866,18 +866,27 @@ public class GameManager : MonoBehaviour
     {
         List<Country> bestPlayers = new List<Country> {playerList[0]};
         int bestScore = 0;
+        int ci = 0;
+        int bi = 0;
         playerList.ForEach(p =>
         {
             if (p.Score > bestScore)
             {
                 bestPlayers = new List<Country> {p};
                 bestScore = p.Score;
+                Debug.Log(bestPlayers[0].Name);
+                bi = ci;
             }
             else if (p.Score == bestScore)
             {
                 bestPlayers.Add(p);
             }
+            ci++;
         });
+        for (int i = 0; i < bi; i++)
+		{
+            mainCamera.GetComponent<CameraPanning>().OnRightButtonPress();
+        }
         return bestPlayers;
     }
 

@@ -9,9 +9,16 @@ public class Countdown : MonoBehaviour
     public int timeRemaining;
     public bool isCountingDown = false;
     public GameObject CountdownBox;
-    public bool r = false;
+    public int result = 0;
+    public int random = -1;
     public void Begin()
     {
+        CountdownBox.GetComponentInChildren<TextMeshProUGUI>().text = "Choose: " + duration + "s";
+        if (isCountingDown && duration != -1)
+		{
+            CancelInvoke();
+            isCountingDown = false;
+		}
         if (!isCountingDown && duration != -1)
         {
             CountdownBox.SetActive(true);
@@ -36,11 +43,18 @@ public class Countdown : MonoBehaviour
             CountdownBox.SetActive(false);
             isCountingDown = false;
             Debug.Log("Time's Up!");
-            if (!r)
+            if (result == -1)
+			{
+                random = Random.Range(0, 2);
+			}
+            if (result == 1 || random == 1)
+			{
+                GameManager.Instance.agree();
+			}
+            else
             {
-                int randomInt = Random.Range(0, 2);
+                GameManager.Instance.decline();
             }
-            r = false;
         }
     }
 
@@ -48,11 +62,15 @@ public class Countdown : MonoBehaviour
 	{
         timeRemaining = 1;
         CountdownBox.SetActive(false);
-        r = true;
     }
 
     public void changeDuration(int timer)
 	{
         duration = timer;
+	}
+
+    public void changeResult(int r)
+	{
+        result = r;
 	}
 }

@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public Countdown countdown;
     // Various Variables
     public GameObject canvas;
     //private GameObject resetCanvas;
@@ -82,7 +83,6 @@ public class GameManager : MonoBehaviour
     public GameObject des2;
 
     public GameObject Settings;
-    public Toggle currSec;
     // Volume
     public AudioMixer mixer;
     public GameObject volumeSlider;
@@ -111,6 +111,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(canvas);
             DontDestroyOnLoad(events);
             DontDestroyOnLoad(BackgroundAmbience);
+            DontDestroyOnLoad(countdown);
 
         }
         else
@@ -371,6 +372,7 @@ public class GameManager : MonoBehaviour
         leaderboard.GetComponent<Animator>().Play("hide_leader");
         currentCountry.GetComponent<Animator>().Play("hide_current");
         roundCount.GetComponent<Animator>().Play("hide_round");
+        countdown.Begin();
         if (completedVotes > 0)
         {
             feedbackBoard.GetComponent<Animator>().Play("feedback_hide");
@@ -450,6 +452,7 @@ public class GameManager : MonoBehaviour
                 currentPIndex += 1;
                 if (currentPIndex == acceptList.Count)
                 {
+                    countdown.reset();
                     AdjustCountries();
                     updateLeaderboard();
                     clearVoteUI();
@@ -457,10 +460,14 @@ public class GameManager : MonoBehaviour
                     havePunished = true;
                     startCitiesPhase();
                 }
-                else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
-                + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
-                + (declineList.Count * 1000)
-                + " \nEffect: Each decliner loses 0.05% growth rate";
+                else
+                {
+                    countdown.Begin();
+                    prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+                    + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
+                    + (declineList.Count * 1000)
+                    + " \nEffect: Each decliner loses 0.05% growth rate";
+                }
             }
         }
         else {
@@ -473,6 +480,7 @@ public class GameManager : MonoBehaviour
                 if (currentVote.sumVotes() < 4)
                 {
                     leaderboard.GetComponent<Animator>().Play("show_P" + (currentPIndex + 1));
+                    countdown.Begin();
                 }
                 if (botMode && currentPIndex == 1) BotVote();
                 if (currentVote.sumVotes() == 4) enactVotes();
@@ -488,6 +496,7 @@ public class GameManager : MonoBehaviour
             currentPIndex += 1;
             if (currentPIndex == acceptList.Count)
             {
+                countdown.reset();
                 AdjustCountries();
                 updateLeaderboard();
                 clearVoteUI();
@@ -495,10 +504,14 @@ public class GameManager : MonoBehaviour
                 havePunished = true;
                 startCitiesPhase();
             }
-            else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+            else
+            {
+                countdown.Begin();
+                prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
                 + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
                 + (declineList.Count * 1000)
                 + " \nEffect: Each decliner loses 0.05% growth rate";
+            }
         }
         else {
             currentVote.DeclineVotes += 1;
@@ -508,6 +521,7 @@ public class GameManager : MonoBehaviour
             if (currentVote.sumVotes() < 4)
             {
                 leaderboard.GetComponent<Animator>().Play("show_P" + (currentPIndex + 1));
+                countdown.Begin();
             }
             if (botMode && currentPIndex == 1) BotVote();
             if (currentVote.sumVotes() == 4) enactVotes();
@@ -549,6 +563,7 @@ public class GameManager : MonoBehaviour
 
     public void enactVotes()
     {
+        countdown.reset();
         completedVotes++;
         AdjustCountries();
         updateLeaderboard();
@@ -958,11 +973,6 @@ public class GameManager : MonoBehaviour
     IEnumerator Wait(int seconds)
     {
         yield return new WaitForSeconds(seconds);
-    }
-    public void ResetToggles(Toggle s)
-    {
-        currSec.isOn = false;
-        currSec = s;
     }
 
     // Sets the volume using the slider

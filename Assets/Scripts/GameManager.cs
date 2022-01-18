@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    public Countdown countdown;
     // Various Variables
     public GameObject canvas;
     //private GameObject resetCanvas;
@@ -81,9 +82,9 @@ public class GameManager : MonoBehaviour
     public GameObject des1;
     public GameObject des2;
 
+    public GameObject Settings;
     // Volume
     public AudioMixer mixer;
-    public GameObject volumeButton;
     public GameObject volumeSlider;
 
     // Start is called before the first frame update
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(canvas);
             DontDestroyOnLoad(events);
             DontDestroyOnLoad(BackgroundAmbience);
+            DontDestroyOnLoad(countdown);
 
         }
         else
@@ -122,7 +124,6 @@ public class GameManager : MonoBehaviour
     public void start()
     {
         //StartCoroutine(HideTextAfterSeconds(1, title));
-        volumeButton.SetActive(false);
         nameEntry.GetComponent<TMP_InputField>().text = "";
         playerList = new List<Country>();
         StartCoroutine(RemoveAfterSeconds(1, startButton));
@@ -138,7 +139,6 @@ public class GameManager : MonoBehaviour
     // Tutorial
     public void TutorialStart()
     {
-        volumeButton.SetActive(false);
         tutorialTextBox.SetActive(true);
         tutorialText.text = "In this game, you represent your country at international climate accords. \n \n" +
             "There are two main numbers you need to consider in this game: GDP and Emissions.";
@@ -191,13 +191,20 @@ public class GameManager : MonoBehaviour
     // Credits
     public void credits()
     {
-        volumeButton.SetActive(false);
         clearMenuUI();
         backButton.SetActive(true);
         creditsText.SetActive(true);
 
     }
 
+    // Settings
+    public void settings()
+	{
+        clearMenuUI();
+        backButton.SetActive(true);
+        Settings.SetActive(true);
+
+	}
     // Go back to Main Menu
     public void Back()
     {
@@ -224,11 +231,11 @@ public class GameManager : MonoBehaviour
 
         //credits off
         StartCoroutine(RemoveAfterSeconds(1, creditsText));
+        StartCoroutine(RemoveAfterSeconds(1, Settings));
         //creditsText.SetActive(false);
-
+        
         //reset main menu
         startButton.SetActive(true);
-        volumeButton.SetActive(true);
         title.text = "Climate Goes Political";
     }
 
@@ -365,6 +372,7 @@ public class GameManager : MonoBehaviour
         leaderboard.GetComponent<Animator>().Play("hide_leader");
         currentCountry.GetComponent<Animator>().Play("hide_current");
         roundCount.GetComponent<Animator>().Play("hide_round");
+        countdown.Begin();
         if (completedVotes > 0)
         {
             feedbackBoard.GetComponent<Animator>().Play("feedback_hide");
@@ -444,6 +452,7 @@ public class GameManager : MonoBehaviour
                 currentPIndex += 1;
                 if (currentPIndex == acceptList.Count)
                 {
+                    countdown.reset();
                     AdjustCountries();
                     updateLeaderboard();
                     clearVoteUI();
@@ -451,10 +460,14 @@ public class GameManager : MonoBehaviour
                     havePunished = true;
                     startCitiesPhase();
                 }
-                else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
-                + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
-                + (declineList.Count * 1000)
-                + " \nEffect: Each decliner loses 0.05% growth rate";
+                else
+                {
+                    countdown.Begin();
+                    prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+                    + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
+                    + (declineList.Count * 1000)
+                    + " \nEffect: Each decliner loses 0.05% growth rate";
+                }
             }
         }
         else {
@@ -467,6 +480,7 @@ public class GameManager : MonoBehaviour
                 if (currentVote.sumVotes() < 4)
                 {
                     leaderboard.GetComponent<Animator>().Play("show_P" + (currentPIndex + 1));
+                    countdown.Begin();
                 }
                 if (botMode && currentPIndex == 1) BotVote();
                 if (currentVote.sumVotes() == 4) enactVotes();
@@ -482,6 +496,7 @@ public class GameManager : MonoBehaviour
             currentPIndex += 1;
             if (currentPIndex == acceptList.Count)
             {
+                countdown.reset();
                 AdjustCountries();
                 updateLeaderboard();
                 clearVoteUI();
@@ -489,10 +504,14 @@ public class GameManager : MonoBehaviour
                 havePunished = true;
                 startCitiesPhase();
             }
-            else prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
+            else
+            {
+                countdown.Begin();
+                prompt.text = "<b>" + acceptList[currentPIndex].Name + "</b>"
                 + " would you like to impose tariffs on everyone who declined?\n\n\nCost = $"
                 + (declineList.Count * 1000)
                 + " \nEffect: Each decliner loses 0.05% growth rate";
+            }
         }
         else {
             currentVote.DeclineVotes += 1;
@@ -502,6 +521,7 @@ public class GameManager : MonoBehaviour
             if (currentVote.sumVotes() < 4)
             {
                 leaderboard.GetComponent<Animator>().Play("show_P" + (currentPIndex + 1));
+                countdown.Begin();
             }
             if (botMode && currentPIndex == 1) BotVote();
             if (currentVote.sumVotes() == 4) enactVotes();
@@ -543,6 +563,7 @@ public class GameManager : MonoBehaviour
 
     public void enactVotes()
     {
+        countdown.reset();
         completedVotes++;
         AdjustCountries();
         updateLeaderboard();
@@ -953,22 +974,18 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
     }
-    // Volume Controls
-    // Activates the volume slider by clicking the icon
-    public void volumeOnClick()
-    {
-        if (volumeSlider.activeSelf == true)
-        {
-            volumeSlider.SetActive(false);
-        }
-        else
-        {
-            volumeSlider.SetActive(true);
-        }
-    }
+
     // Sets the volume using the slider
     public void setVolume(float sliderValue)
     {
         mixer.SetFloat("masterVol", (Mathf.Log10(sliderValue) * 20));
+    }
+    public void setMusic(float sliderValue)
+    {
+        mixer.SetFloat("musicVol", (Mathf.Log10(sliderValue) * 20));
+    }
+    public void setOther(float sliderValue)
+    {
+        mixer.SetFloat("otherVol", (Mathf.Log10(sliderValue) * 20));
     }
 }

@@ -299,8 +299,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            mainCamera.transform.position = new Vector3(-9.7f, 4.9f, -1f);
-            mainCamera.GetComponent<CameraPanning>().CurrentCity = 0;
+            //mainCamera.transform.position = new Vector3(-9.7f, 4.9f, -1f);
+            //mainCamera.GetComponent<CameraPanning>().CurrentCity = 0;
             TextMeshProUGUI[] nameList = leaderboard.transform.Find("Names").GetComponentsInChildren<TextMeshProUGUI>();
             for (int i = 0; i < playerList.Count; i++)
             {
